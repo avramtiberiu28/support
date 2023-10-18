@@ -34,7 +34,7 @@ export default function Login () {
     $(document).on('change', '#societate', function () {
         let id_societate = $("#societate").val();
         localStorage.setItem('id_societate', id_societate);
-        //location.reload(true);
+        location.reload(true);
     })
     if(result.length != 0){
         if(result[0][0].flag == 0 && result[0][0].mesaj == 'Wrong password!'){
