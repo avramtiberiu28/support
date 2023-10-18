@@ -9,7 +9,6 @@ export default function get_nume_societate(){
     Axios.get(url,{signal: controller.signal}).then((data) => {
         setSocietate(data.data)
     })
-    console.log(societate);
     if(societate.length == 1){
         controller.abort();
         nume_societate = societate[0].name;

@@ -31,11 +31,11 @@ export default function Login () {
         });
         adu_societati();
     }
-    function reload_page(){
-        let id_societate = $("#societate").val()
+    $(document).on('change', '#societate', function () {
+        let id_societate = $("#societate").val();
         localStorage.setItem('id_societate', id_societate);
-        location.reload(true);
-    }
+        //location.reload(true);
+    })
     if(result.length != 0){
         if(result[0][0].flag == 0 && result[0][0].mesaj == 'Wrong password!'){
             let mesaj = 'Parola completata este gresita!';
@@ -81,6 +81,7 @@ export default function Login () {
             let prename = result[0][0].prename
             let count_societati = result[0][0].count_id_user_info;
             let societati_concat = result[0][0].societati;
+            let societati_deconcat = societati_concat.split(',');
             localStorage.setItem('id_user', id_user)
             localStorage.setItem("name", name );
             localStorage.setItem("username", username);
@@ -93,12 +94,17 @@ export default function Login () {
                 value: '0',
                 text : 'Alege o societate' 
             }));
-            $.each(societati, function (i, societate) {
-                $('#societate').append($('<option>', { 
-                    value: societate.id_societate,
-                    text : societate.name 
-                }));
-            });
+            $.each(societati_deconcat, function (j, societate_deconcat){
+                $.each(societati, function (i, societate) {
+                    if(societate_deconcat == societate.id_societate){
+                        $('#societate').append($('<option>', { 
+                            value: societate.id_societate,
+                            text : societate.name 
+                        }));
+                    }
+                });
+            })
+            
         }
     }
     return (
@@ -121,7 +127,7 @@ export default function Login () {
                     <span className="glyphicon glyphicon-lock form-control-feedback"></span>
                 </div>
                 <div className="form-group has-feedback">
-                    <select onChange={(e) => {reload_page()}} className='form-control w-75 hidden' id='societate' required>
+                    <select className='form-control w-75 hidden' id='societate' required>
 
                     </select>
                 </div>
