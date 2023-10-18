@@ -60,10 +60,12 @@ export default function Login () {
         if(result[0][0].flag == 1 && result[0][0].mesaj == 'Success' && result[0][0].count_id_user_info == 1){
             $('#loggedin').val('1');
             localStorage.setItem("loggedin","true");
+            let id_user = result[0][0].id_user;
             let name = result[0][0].name
             let username = result[0][0].username;
             let prename = result[0][0].prename
             let id_societate = result[0][0].id_societate;
+            localStorage.setItem('id_user', id_user)
             localStorage.setItem("name", name );
             localStorage.setItem("username", username);
             localStorage.setItem('prename', prename);
@@ -73,14 +75,18 @@ export default function Login () {
         else if(result[0][0].flag == 1 && result[0][0].mesaj == 'Success' && result[0][0].count_id_user_info  > 1){
             $('#loggedin').val('1');
             localStorage.setItem("loggedin","true");
+            let id_user = result[0][0].id_user;
             let name = result[0][0].name
             let username = result[0][0].username;
             let prename = result[0][0].prename
             let count_societati = result[0][0].count_id_user_info;
+            let societati_concat = result[0][0].societati;
+            localStorage.setItem('id_user', id_user)
             localStorage.setItem("name", name );
             localStorage.setItem("username", username);
             localStorage.setItem('prename', prename);
             localStorage.setItem('count_societati', count_societati);
+            localStorage.setItem('societati_concat', societati_concat);
             $('#societate').removeClass('hidden');
             $('#societate').find('option').remove();
             $('#societate').append($('<option>', { 

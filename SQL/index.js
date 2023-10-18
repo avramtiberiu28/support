@@ -4,6 +4,7 @@ const cors = require('cors')
 
 const app = express();
 const  PORT = 3002;
+const controller = new AbortController;
 app.use(cors());
 app.use(express.json())
 
@@ -52,6 +53,32 @@ app.post("/api/get/societati", (req, res) => {
         }
         res.send(result);
         console.log(result);
+    })
+})
+
+app.get("/api/get/societate/:id_societate", (req,res)=>{
+    const id_societate = req.params.id_societate;
+    let sql_query = "SELECT name FROM societati WHERE id_societate = ? ";
+    db.query(sql_query, [id_societate], (err, result) => {
+        if(err) {
+            console.log(err);
+        }
+        controller.abort();
+        res.send(result);
+    })
+})
+app.get("/api/get/drepturi/:id_societate/:id_user", (req,res)=>{
+    const id_societate = req.params.id_societate;
+    const id_user = req.params.id_user;
+    console.log(id_societate, id_user);
+    let sql_query = "SELECT drepturi FROM user_info WHERE id_societate = ? AND id_user = ?";
+    db.query(sql_query, [id_societate, id_user], (err, result) => {
+        if(err) {
+            console.log(err);
+        }
+        controller.abort();
+        console.log(result)
+        res.send(result);
     })
 })
 

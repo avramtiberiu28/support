@@ -1,39 +1,59 @@
 import {useState} from 'react'
 import Axios from 'axios'
+const controller = new AbortController;
 export default function Navbar () {
-    const id_societate = localStorage.id_societate;
     const id_user = localStorage.id_user;
-    const [societati, societati_list] = useState('');
-    function get_nume_societate(){
-        Axios.post("http://localhost:3002/api/get/nume_societate").then((data) => {
-            societati_list(data.data)
-        })
+    const id_societate = localStorage.id_societate;
+    const count_societati = localStorage.count_societati;
+    let nume_societate;
+    let rights;
+    const [societate , setSocietate] = useState("");
+    const [drepturi , setDrepturi] = useState("");
+    let url = "http://localhost:3002/api/get/societate/"+id_societate;
+    Axios.get(url,{signal: controller.signal}).then((data) => {
+        setSocietate(data.data)
+    })
+    url = "http://localhost:3002/api/get/drepturi/"+id_societate+"/"+id_user;
+    Axios.get(url,{signal: controller.signal}).then((data) => {
+        setDrepturi(data.data)
+    })
+    if(societate.length == 1){
+        controller.abort();
+        nume_societate = societate[0].name;
     }
-    get_nume_societate();
-    //const drepturi = localStorage.drepturi;
-    /*if(drepturi == 1){
-        return (
-            <div className="navbar border-bottom border-top border-right border-left">
-                <div className="container container-navbar">
-                    <ul className="nav navbar-nav">
-                        <li><a href="?refrigerata">Refrigerate</a></li>
-                        <li><a href="?congelata">Congelate</a></li>
-                        <li><a href="?shaorma">Shaorma</a></li>
-                        <li><a href="?preparate">Preparate</a></li>
-                        <li><a href="?burgeri">Burgeri</a></li>
-                        <li><a href="?licitatii">Licitatii</a></li>
-                        <li><a href="?curcan">Curcan</a></li>
-                    </ul>
-                    <div className="float-right">
-                        <a className="p-6 block f-size-14px" id="btn-addLabel"><i className="fa fa-add" aria-hidden='true'></i> Adauga eticheta</a>
-                        <a className="p-6 block f-size-14px" id="btn-productie"><i className="fa fa-bars" aria-hidden='true'></i> Productie</a>
-                        <a className="p-6 block f-size-14px" id="btn-logout"><span className="glyphicon glyphicon-log-out"></span> Logout</a>
-                    </div>
-                </div>
-            </div>
-        )
+    if(drepturi.length == 1){
+        controller.abort();
+        rights = drepturi[0].drepturi.split(',');
     }
-    else if(drepturi == 0){*/
+    if(count_societati > 1){
+        $("#societate").html('');
+        let html = '<li className="dropdown">'
+            html +=  '<a href="#" className="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">'
+            html +=     'Societate: ' + nume_societate                                
+            html +=  '</a>'
+            html +=  '<ul class="dropdown-menu">'
+            let societati_concat = localStorage.societati_concat;
+            let societati_deconcat = societati_concat.split(',');
+            let denumire_societate;
+            $.each(societati_deconcat, function (i, id_societate) {
+                if(id_societate == 1){
+                    denumire_societate = 'Fraher Distribution'
+                }
+                else if(id_societate == 2){
+                    denumire_societate = 'Fraher Retail'
+                }
+                else if(id_societate == 3){
+                    denumire_societate = 'Fraher'
+                }
+                html +=     '<li>'
+                html +=         '<a className="titles" href="?change_societate='+id_societate+'"><i className="fa fa-arrow-right"></i>'+denumire_societate+'</a>'
+                html +=     '</li>'
+            });
+            html +=  '</ul>'
+            html += '</li>'
+           
+        $("#societate").append(html);
+    }
         return (
             <header className="main-header"> 
                 <nav className="navbar navbar-static-top">
@@ -53,7 +73,7 @@ export default function Navbar () {
                                 <li className="dropdown"><a href="#" className="dropdown-toggle" data-toggle="dropdown">Adauga <span className="caret"></span></a>
                                     <ul className="dropdown-menu" role="menu">
                                         <li>
-                                            <a className="titles" href="/application/master/v_item.php" target="_self" title="Ticketele mele">
+                                            <a className="titles" href="?mytickets" target="_self" title="Ticketele mele">
                                                 <i className="fa  fa-arrow-right"></i>Tickete 
                                             </a>
                                         </li>
@@ -62,13 +82,13 @@ export default function Navbar () {
                                 <li className="dropdown"><a href="#" className="dropdown-toggle" data-toggle="dropdown">Manager <span className="caret"></span></a>
                                     <ul className="dropdown-menu" role="menu">
                                         <li>
-                                            <a className="titles" href="/application/mananger/v_index.php" target="_self" title="Toate ticketele">
+                                            <a className="titles" href="?alltickets" target="_self" title="Toate ticketele">
                                                 <i className="fa  fa-arrow-right"></i>Toate ticketele 
                                             </a>
                                         </li>
                                         <li>
-                                            <a className="titles" href="/application/mananger/grafice.php" target="_self" title="Grafice">
-                                                <i className="fa �fa-arrow-right"></i>Grafice 
+                                            <a className="titles" href="?stats" target="_self" title="Grafice">
+                                                <i className="fa fa-arrow-right"></i>Grafice 
                                             </a>
                                         </li>
                                     </ul>
@@ -76,7 +96,7 @@ export default function Navbar () {
                                 <li className="dropdown"><a href="#" className="dropdown-toggle" data-toggle="dropdown">Utilitare <span className="caret"></span></a>
                                     <ul className="dropdown-menu" role="menu">
                                         <li>
-                                            <a className="titles" href="/application/utility/v_mstuser.php" target="_self" title="Utilizatori">
+                                            <a className="titles" href="?user_mgmt" target="_self" title="Utilizatori">
                                                 <i className="fa  fa-arrow-right"></i>Utilizatori 
                                             </a>
                                         </li>
@@ -85,7 +105,7 @@ export default function Navbar () {
                             </ul>
                             <ul className="nav navbar-nav">
                                 <li className="dropdown user user-menu">
-                                    <a href="#" className="dropdown-toggle" data-toggle="dropdown">
+                                    <a href="?user" className="dropdown-toggle" data-toggle="dropdown">
                                         <span className="hidden-xs"><span className="glyphicon glyphicon-user" />{' '+localStorage.name+' '+localStorage.prename}</span>
                                     </a> 
                                 </li>
@@ -93,9 +113,9 @@ export default function Navbar () {
                                     <a className="p-6 block f-size-14px" id="btn-logout"><span className="glyphicon glyphicon-log-out" title="Inchide aplicatia"></span> Logout</a>
                                 </li>
                             </ul>
-                            <ul id="societate" className="nav navbar-nav societate">
+                            <ul id="societate" className="nav navbar-nav navbar-right">
                                 <li>
-                                    <a className="p-6 block f-size-14px societate"><span><b>Societate: </b>{localStorage.id_societate}</span></a>
+                                    <a className="p-6 block f-size-14px societate"><span><b>Societate: </b>{nume_societate}</span></a>
                                 </li>
                             </ul>
                         </div>
@@ -103,5 +123,4 @@ export default function Navbar () {
                 </nav>
             </header>
         )
-    //}
 }
