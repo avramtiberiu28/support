@@ -1,22 +1,20 @@
 import {useState} from 'react'
 import Axios from 'axios'
+import submeniu_societati from './submenu_societati';
+import get_nume_societate from './nume_societate';
 const controller = new AbortController;
 const controller_meniu = new AbortController;
 export default function Navbar () {
     const id_user = localStorage.id_user;
     const id_societate = localStorage.id_societate;
     const count_societati = localStorage.count_societati;
-    let nume_societate;
+    let url;
     let rights;
     let submenus;
-    const [societate , setSocietate] = useState("");
+    let nume_societate = get_nume_societate(id_societate);
     const [drepturi , setDrepturi] = useState("");
     const [submeniuri , setSubmeniuri] = useState("");
     const [meniu , setMeniu] = useState("");
-    let url = "http://localhost:3002/api/get/societate/"+id_societate;
-    Axios.get(url,{signal: controller.signal}).then((data) => {
-        setSocietate(data.data)
-    })
     url = "http://localhost:3002/api/get/drepturi/"+id_societate+"/"+id_user;
     Axios.get(url,{signal: controller.signal}).then((data) => {
         setDrepturi(data.data)
@@ -25,10 +23,7 @@ export default function Navbar () {
     Axios.get(url,{signal: controller.signal}).then((data) => {
         setSubmeniuri(data.data)
     })
-    if(societate.length == 1){
-        controller.abort();
-        nume_societate = societate[0].name;
-    }
+   
     if(drepturi.length == 1){
         controller.abort();
         rights = drepturi[0].drepturi.split(',');
@@ -37,35 +32,8 @@ export default function Navbar () {
         controller.abort();
         submenus = submeniuri[0].submeniuri.split(',');
     }
-    console.log(submenus);
     if(count_societati > 1){
-        $("#societate").html('');
-        let html = '<li className="dropdown">'
-            html +=  '<a href="#" className="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">'
-            html +=     'Societate: ' + nume_societate                                
-            html +=  '</a>'
-            html +=  '<ul class="dropdown-menu">'
-            let societati_concat = localStorage.societati_concat;
-            let societati_deconcat = societati_concat.split(',');
-            let denumire_societate;
-            $.each(societati_deconcat, function (i, id_societate) {
-                if(id_societate == 1){
-                    denumire_societate = 'Fraher Distribution'
-                }
-                else if(id_societate == 2){
-                    denumire_societate = 'Fraher Retail'
-                }
-                else if(id_societate == 3){
-                    denumire_societate = 'Fraher'
-                }
-                html +=     '<li>'
-                html +=         '<a className="titles" href="?change_societate='+id_societate+'"><i className="fa fa-arrow-right"></i>'+denumire_societate+'</a>'
-                html +=     '</li>'
-            });
-            html +=  '</ul>'
-            html += '</li>'
-           
-        $("#societate").append(html);
+        submeniu_societati(id_societate);
     }
     function meniuri(rights){
         $.each(rights, function(i, drept){

@@ -64,6 +64,7 @@ app.get("/api/get/societate/:id_societate", (req,res)=>{
             console.log(err);
         }
         controller.abort();
+        console.log(result);
         res.send(result);
     })
 })
