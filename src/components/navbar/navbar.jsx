@@ -1,49 +1,14 @@
-import {useState} from 'react'
-import Axios from 'axios'
+import get_meniuri from './meniuri';
 import submeniu_societati from './submenu_societati';
 import get_nume_societate from './nume_societate';
-const controller = new AbortController;
-const controller_meniu = new AbortController;
+import get_drepturi from './drepturi';
+import get_submeniuri from './submeniuri';
 export default function Navbar () {
-    const id_user = localStorage.id_user;
-    const id_societate = localStorage.id_societate;
+    
     const count_societati = localStorage.count_societati;
-    let url;
-    let rights;
-    let submenus;
-    let nume_societate = get_nume_societate(id_societate);
-    const [drepturi , setDrepturi] = useState("");
-    const [submeniuri , setSubmeniuri] = useState("");
-    const [meniu , setMeniu] = useState("");
-    url = "http://localhost:3002/api/get/drepturi/"+id_societate+"/"+id_user;
-    Axios.get(url,{signal: controller.signal}).then((data) => {
-        setDrepturi(data.data)
-    })
-    url = "http://localhost:3002/api/get/submeniuri/"+id_societate+"/"+id_user;
-    Axios.get(url,{signal: controller.signal}).then((data) => {
-        setSubmeniuri(data.data)
-    })
-   
-    if(drepturi.length == 1){
-        controller.abort();
-        rights = drepturi[0].drepturi.split(',');
-    }
-    if(submeniuri.length == 1){
-        controller.abort();
-        submenus = submeniuri[0].submeniuri.split(',');
-    }
+    let nume_societate = get_nume_societate();
     if(count_societati > 1){
-        submeniu_societati(id_societate);
-    }
-    function meniuri(rights){
-        $.each(rights, function(i, drept){
-            url = "http://localhost:3002/api/get/nume_meniu/"+drept;
-            Axios.get(url,{signal: controller_meniu.signal}).then((data) => {
-                setMeniu(data.data)
-            })
-            console.log(meniu);
-        })
-        controller_meniu.abort();
+        submeniu_societati();
     }
         return (
             <header className="main-header"> 

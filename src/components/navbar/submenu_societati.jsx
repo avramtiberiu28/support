@@ -1,5 +1,6 @@
 import get_nume_societate from './nume_societate';
-export default function submeniu_societati (id_societate) {
+export default function submeniu_societati () {
+        const id_societate = localStorage.id_societate;
         let nume_societate = get_nume_societate(id_societate);
         $("#societate").html('');
         let html = '<li className="dropdown">'

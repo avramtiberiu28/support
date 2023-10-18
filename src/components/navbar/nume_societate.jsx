@@ -1,7 +1,8 @@
 import {useState} from 'react'
 import Axios from 'axios'
-export default function get_nume_societate(id_societate){
+export default function get_nume_societate(){
     const controller = new AbortController;
+    const id_societate = localStorage.id_societate;
     let nume_societate;
     const [societate , setSocietate] = useState("");
     let url = "http://localhost:3002/api/get/societate/"+id_societate;
