@@ -79,6 +79,31 @@ app.get("/api/get/drepturi/:id_societate/:id_user", (req,res)=>{
         res.send(result);
     })
 })
+app.get("/api/get/submeniuri/:id_societate/:id_user", (req,res)=>{
+    const id_societate = req.params.id_societate;
+    const id_user = req.params.id_user;
+    let sql_query = "SELECT submeniuri FROM user_info WHERE id_societate = ? AND id_user = ?";
+    db.query(sql_query, [id_societate, id_user], (err, result) => {
+        if(err) {
+            console.log(err);
+        }
+        controller.abort();
+        res.send(result);
+    })
+})
+
+app.get("/api/get/nume_meniu/:id_meniu", (req,res)=>{
+    const id_meniu = req.params.id_meniu;
+    let sql_query = "SELECT name FROM drepturi WHERE id_drepturi = ?";
+    db.query(sql_query, [id_meniu], (err, result) => {
+        if(err) {
+            console.log(err);
+        }
+        controller.abort();
+        console.log(result);
+        res.send(result);
+    })
+})
 
 app.post('/api/save/label', (req,res)=> {
     const item = req.body;

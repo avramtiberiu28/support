@@ -1,14 +1,18 @@
 import {useState} from 'react'
 import Axios from 'axios'
 const controller = new AbortController;
+const controller_meniu = new AbortController;
 export default function Navbar () {
     const id_user = localStorage.id_user;
     const id_societate = localStorage.id_societate;
     const count_societati = localStorage.count_societati;
     let nume_societate;
     let rights;
+    let submenus;
     const [societate , setSocietate] = useState("");
     const [drepturi , setDrepturi] = useState("");
+    const [submeniuri , setSubmeniuri] = useState("");
+    const [meniu , setMeniu] = useState("");
     let url = "http://localhost:3002/api/get/societate/"+id_societate;
     Axios.get(url,{signal: controller.signal}).then((data) => {
         setSocietate(data.data)
@@ -16,6 +20,10 @@ export default function Navbar () {
     url = "http://localhost:3002/api/get/drepturi/"+id_societate+"/"+id_user;
     Axios.get(url,{signal: controller.signal}).then((data) => {
         setDrepturi(data.data)
+    })
+    url = "http://localhost:3002/api/get/submeniuri/"+id_societate+"/"+id_user;
+    Axios.get(url,{signal: controller.signal}).then((data) => {
+        setSubmeniuri(data.data)
     })
     if(societate.length == 1){
         controller.abort();
@@ -25,6 +33,11 @@ export default function Navbar () {
         controller.abort();
         rights = drepturi[0].drepturi.split(',');
     }
+    if(submeniuri.length == 1){
+        controller.abort();
+        submenus = submeniuri[0].submeniuri.split(',');
+    }
+    console.log(submenus);
     if(count_societati > 1){
         $("#societate").html('');
         let html = '<li className="dropdown">'
@@ -53,6 +66,16 @@ export default function Navbar () {
             html += '</li>'
            
         $("#societate").append(html);
+    }
+    function meniuri(rights){
+        $.each(rights, function(i, drept){
+            url = "http://localhost:3002/api/get/nume_meniu/"+drept;
+            Axios.get(url,{signal: controller_meniu.signal}).then((data) => {
+                setMeniu(data.data)
+            })
+            console.log(meniu);
+        })
+        controller_meniu.abort();
     }
         return (
             <header className="main-header"> 
