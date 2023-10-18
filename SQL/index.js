@@ -70,14 +70,12 @@ app.get("/api/get/societate/:id_societate", (req,res)=>{
 app.get("/api/get/drepturi/:id_societate/:id_user", (req,res)=>{
     const id_societate = req.params.id_societate;
     const id_user = req.params.id_user;
-    console.log(id_societate, id_user);
     let sql_query = "SELECT drepturi FROM user_info WHERE id_societate = ? AND id_user = ?";
     db.query(sql_query, [id_societate, id_user], (err, result) => {
         if(err) {
             console.log(err);
         }
         controller.abort();
-        console.log(result)
         res.send(result);
     })
 })
